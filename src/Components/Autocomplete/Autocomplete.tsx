@@ -45,7 +45,7 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
     }
 
     timeoutRef.current = setTimeout(() => {
-      handleFiltered(newValue);
+      handleFiltered(newValue.trim());
     }, delay);
   };
 
