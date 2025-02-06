@@ -10,7 +10,7 @@ export const App: React.FC = () => {
   );
   const [userValue, setUserValue] = useState('');
 
-  const handleFiltered = (value: string) => {
+  const handleChange = (value: string) => {
     setUserValue(value);
   };
 
@@ -33,14 +33,11 @@ export const App: React.FC = () => {
 
         <Autocomplete
           persons={memoizedFilteredPeople}
-          setSelectedPerson={setSelectedPerson}
-          delay={300}
-          handleFiltered={handleFiltered}
+          onSelect={setSelectedPerson}
+          onChange={handleChange}
         />
 
-        {memoizedFilteredPeople.length > 0 ? (
-          ''
-        ) : (
+        {memoizedFilteredPeople.length === 0 && (
           <div
             className="
             notification

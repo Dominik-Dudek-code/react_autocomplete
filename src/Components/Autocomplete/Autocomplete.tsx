@@ -3,16 +3,16 @@ import { Person } from '../../types/Person';
 
 type AutocompleteProps = {
   persons: Person[];
-  delay: number;
-  setSelectedPerson: (person: Person | undefined) => void;
-  handleFiltered: (newValue: string) => void;
+  delay?: number;
+  onSelect: (person: Person | undefined) => void;
+  onChange: (newValue: string) => void;
 };
 
 export const Autocomplete: React.FC<AutocompleteProps> = ({
   persons,
-  delay,
-  setSelectedPerson,
-  handleFiltered,
+  delay = 300,
+  onSelect,
+  onChange,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [value, setValue] = useState('');
@@ -35,18 +35,27 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [value, persons]);
+  });
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const debounce = (newValue: string) => {
+  const handleInputChange = (newValue: string) => {
+    setValue(newValue);
+    onSelect(undefined);
+
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
 
     timeoutRef.current = setTimeout(() => {
-      handleFiltered(newValue.trim());
+      onChange(newValue.trim());
     }, delay);
+  };
+
+  const handlePersonChange = (selectedPerson: Person) => {
+    onSelect(selectedPerson);
+    setValue(selectedPerson.name);
+    setIsOpen(false);
   };
 
   return (
@@ -58,13 +67,7 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
           className="input"
           data-cy="search-input"
           value={value}
-          onChange={event => {
-            const newValue = event.target.value;
-
-            setValue(newValue);
-            debounce(newValue);
-            setSelectedPerson(undefined);
-          }}
+          onChange={event => handleInputChange(event.target.value)}
           onClick={() => {
             setIsOpen(true);
           }}
@@ -87,11 +90,7 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
                   <p
                     className="has-text-link"
                     style={{ cursor: 'pointer' }}
-                    onClick={() => {
-                      setSelectedPerson(person);
-                      setValue(person.name);
-                      setIsOpen(false);
-                    }}
+                    onClick={() => handlePersonChange(person)}
                   >
                     {person.name}
                   </p>
