@@ -26,7 +26,6 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
         !dropdownRef.current.contains(event.target as Node)
       ) {
         setIsOpen(false);
-        setValue(value);
       }
     };
 
@@ -35,7 +34,8 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
